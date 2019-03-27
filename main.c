@@ -174,7 +174,14 @@ void keygen(int seed)
 	printf("Public Key Info: p: %" PRIu64 " g: %" PRIu64 " e2: %" PRIu64 "\n", publicKey.p, publicKey.g, publicKey.d);
 	printf("Private Key Info: p: %" PRIu64 " g: %" PRIu64 " d: %" PRIu64 "\n", privateKey.p, privateKey.g, privateKey.d);
 
-	
+	FILE *publicFile = fopen("pubkey.txt", "w");
+	FILE *privateFile = fopen("prikey.txt", "w");
+
+	fprintf(publicFile, "%" PRIu64 " %" PRIu64 " %" PRIu64 "\n", publicKey.p, publicKey.g, publicKey.d);
+	fprintf(privateFile, "%" PRIu64 " %" PRIu64 " %" PRIu64 "\n", privateKey.p, privateKey.g, privateKey.d);
+
+	fclose(publicFile);
+	fclose(privateFile);
 }
 
 Num randBetween(Num low, Num high)
