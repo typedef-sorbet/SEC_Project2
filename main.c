@@ -2,8 +2,8 @@
 
 int main()
 {
-	srand((unsigned int)time(NULL));
-	printf("%" PRIu64 "\n", findPrime(71771));
+	// srand((unsigned int)time(NULL));
+	keygen(-1);
 }
 
 //	Written using the pseudocode from the Algorithms class book.
@@ -113,8 +113,13 @@ bool witness(Num a, Num n)
 // Generates a 33-bit long prime p with primitive root 2.
 // This number will be the number p in both keys.
 // Each key will have a g of 2, as guaranteed by this prime-finding process.
-Num findPrime(Num seed)
+Num findPrime(int seed)
 {
+	if(seed > 0)
+		srand(seed);
+	else
+		srand((unsigned int)time(NULL));
+
 	Num p;
 	PreKey q;
 	bool primeFound = false;
@@ -122,14 +127,11 @@ Num findPrime(Num seed)
 	{
 		while(!millerRabin((q = randomNumber()).concat, 40));
 		// q is now a prime number of length 32 bits
-		printf("Found %" PRIu64 " to be prime\n", q.concat);
 		if(q.concat % 12 == 5)
 		{
-			printf("Passes mod 12 test\n");
 			p = 2 * q.concat + 1;
 			if(millerRabin(p, 40))
 			{
-				printf("Found prime %" PRIu64 " with primitive root 2\n", p);
 				primeFound = true;
 				return p;
 			}
@@ -153,8 +155,31 @@ PreKey randomNumber()
 	if((number.discrete.low & 0x01) == 0)
 		number.discrete.low ^= 0x01;
 
-	// printf("High: %" PRIu16 ", Low: %" PRIu16 "\n", 
-	// 	number.discrete.high, number.discrete.low);
-
 	return number;
 }
+
+void keygen(int seed)
+{
+	Num p = findPrime(seed);
+	Num g = 2;
+	Num d = randBetween(1, p);
+	Num e2 = fastModExp(g, d, p);
+
+	Key publicKey, privateKey;
+	publicKey.p = privateKey.p = p;
+	publicKey.g = privateKey.g = g;
+	publicKey.d = e2;
+	privateKey.d = d;
+
+	printf("Public Key Info: p: %" PRIu64 " g: %" PRIu64 " e2: %" PRIu64 "\n", publicKey.p, publicKey.g, publicKey.d);
+	printf("Private Key Info: p: %" PRIu64 " g: %" PRIu64 " d: %" PRIu64 "\n", privateKey.p, privateKey.g, privateKey.d);
+
+	
+}
+
+Num randBetween(Num low, Num high)
+{
+	// returns some number is [low, high)
+	return low + ((Num)rand() % (high - low));
+}
+

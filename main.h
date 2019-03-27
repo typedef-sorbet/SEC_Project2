@@ -25,6 +25,13 @@ typedef union prime{
 	Num concat;
 }PreKey;
 
+typedef struct key{
+	Num p;
+	Num g;
+	Num d;
+}Key;
+
+
 // DEFINES
 #define COMPOSITE false
 #define PRIME true
@@ -35,7 +42,9 @@ bool millerRabin(Num, Num);
 bool witness(Num, Num);
 bool isBitSet(Num, int);
 int numLen(Num);
-Num findPrime(Num);
+Num findPrime(int);
 PreKey randomNumber();
+void keygen(int);
+Num randBetween(Num, Num);
 
 #endif
