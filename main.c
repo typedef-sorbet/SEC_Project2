@@ -55,9 +55,9 @@ bool millerRabin(Num n, Num s)
 {
 	if(n == 2)
 		return PRIME;
+	else if(n%2 == 0)
+		return COMPOSITE;
 
-	srand(n-2*s);
-	srand(rand());
 	for(Num i = 0; i < s; i++)
 	{
 		Num a = ((Num)rand() % (n-3)) + 2;
@@ -111,6 +111,8 @@ bool witness(Num a, Num n)
 */
 
 // Generates a 33-bit long prime p with primitive root 2.
+// This number will be the number p in both keys.
+// Each key will have a g of 2, as guaranteed by this prime-finding process.
 Num findPrime(Num seed)
 {
 	Num p;
@@ -138,15 +140,21 @@ Num findPrime(Num seed)
 	return p;
 }
 
+// Randomly generates an odd PreKey of length 31 bits.
 PreKey randomNumber()
 {
 	PreKey number;
-	number.discrete.byte1 = 128;	// ensure 32nd bit is set
 
-	number.discrete.byte1 += rand() % 128;
-	number.discrete.byte2 = rand() % 256;
-	number.discrete.byte3 = rand() % 256;
-	number.discrete.byte4 = rand() % 256;
+	number.discrete.high = 16384;
+
+	number.discrete.high ^= ((uint16_t)rand()) % 16384;		// 15 bits
+	number.discrete.low = ((uint16_t)rand()) % 65536;		// 16 bits
+
+	if((number.discrete.low & 0x01) == 0)
+		number.discrete.low ^= 0x01;
+
+	// printf("High: %" PRIu16 ", Low: %" PRIu16 "\n", 
+	// 	number.discrete.high, number.discrete.low);
 
 	return number;
 }

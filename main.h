@@ -14,11 +14,8 @@
 
 // 	STRUCTS
 struct composition{
-	// <byte1, byte2, byte3, byte4>
-	unsigned char byte1;
-	unsigned char byte2;
-	unsigned char byte3;
-	unsigned char byte4;
+	uint16_t low;
+	uint16_t high;
 };
 
 // TYPEDEFS
