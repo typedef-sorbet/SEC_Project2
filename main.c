@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 	if(argc < 3)
 	{
 		printf("Error: Too few arguments given to %s\n", argv[0]);
-		printf("Usage: %s keygen seed\n%s encrypt key.txt plaintext\n%s decrypt key.txt plaintext\n", 
+		printf("Usage: \n\t%s keygen seed\n\t%s encrypt key.txt plaintext.txt\n\t%s decrypt key.txt ciphertext.txt\n", 
 			argv[0], argv[0], argv[0]);
 		exit(1);
 	}
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 	else
 	{
 		printf("Error: Invalid arguments given to %s\n", argv[0]);
-		printf("Usage: %s keygen seed\n%s encrypt key.txt plaintext\n%s decrypt key.txt plaintext\n", 
+		printf("Usage: %s keygen <seed>\n%s encrypt <key_file> <plaintext_file>\n%s decrypt <key_file> <plaintext_file>\n", 
 			argv[0], argv[0], argv[0]);
 		exit(1);
 	}
@@ -101,9 +101,8 @@ bool millerRabin(Num n, Num s)
 	return PRIME;
 }
 
-//	Witness test to be used in the above Miller-Rabin alg.s.
-//	Used to check if the number n is definitely composite, or needs
-//	further checking.
+//	Witness test to be used in the above Miller-Rabin alg.
+//	Used to check if the number n is definitely composite, or needs further checking.
 //	Returns true if n is definitely composite, false if it might be prime.
 bool witness(Num a, Num n)
 {
@@ -220,7 +219,7 @@ void keygen(int seed)
 
 Num randBetween(Num low, Num high)
 {
-	// returns some number is [low, high)
+	// returns some number on [low, high)
 	return low + ((Num)rand() % (high - low));
 }
 

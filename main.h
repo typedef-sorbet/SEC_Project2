@@ -18,7 +18,7 @@ struct composition{
 	uint16_t high;
 };
 
-// TYPEDEFS
+// TYPEDEFS + STRUCTS/UNIONS
 typedef uint64_t Num;
 typedef union prime{
 	struct composition discrete;
