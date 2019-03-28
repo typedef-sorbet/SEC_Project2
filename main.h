@@ -18,12 +18,19 @@ struct composition{
 	uint16_t high;
 };
 
-// TYPEDEFS
+// TYPEDEFS + STRUCTS/UNIONS
 typedef uint64_t Num;
 typedef union prime{
 	struct composition discrete;
 	Num concat;
 }PreKey;
+
+typedef struct key{
+	Num p;
+	Num g;
+	Num d;
+}Key;
+
 
 // DEFINES
 #define COMPOSITE false
@@ -35,7 +42,9 @@ bool millerRabin(Num, Num);
 bool witness(Num, Num);
 bool isBitSet(Num, int);
 int numLen(Num);
-Num findPrime(Num);
+Num findPrime(int);
 PreKey randomNumber();
+void keygen(int);
+Num randBetween(Num, Num);
 
 #endif
