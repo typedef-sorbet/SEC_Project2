@@ -10,6 +10,11 @@ int main(int argc, char *argv[])
 	*/
 	if(argc < 3)
 	{
+		if(argc == 2 && strstr(argv[1], "test") != NULL)
+		{
+			runTests();
+			exit(0);
+		}
 		printf("Error: Too few arguments given to %s\n", argv[0]);
 		printf("Usage: \n\t%s keygen seed\n\t%s encrypt key.txt plaintext.txt\n\t%s decrypt key.txt ciphertext.txt\n", 
 			argv[0], argv[0], argv[0]);
@@ -24,7 +29,20 @@ int main(int argc, char *argv[])
 	}
 	else if(strstr(mode, "encrypt") != NULL)
 	{
-		printf("Not implemented yet\n");
+		// attempt to open relevant files
+		char *keyPath = argv[2];
+		char *plainPath = argv[3];
+
+		FILE *keyFile = fopen(keyPath, "r");
+		FILE *plainFile = fopen(plainPath, "r");
+
+		if(keyFile == NULL || plainPath == NULL)
+		{
+			fprintf(stderr, "Error: unable to open one or more of the specified files. Exiting...\n");
+			exit(1);
+		}
+
+		encrypt(plainFile, keyFile);
 	}
 	else if(strstr(mode, "decrypt") != NULL)
 	{
@@ -221,5 +239,58 @@ Num randBetween(Num low, Num high)
 {
 	// returns some number on [low, high)
 	return low + ((Num)rand() % (high - low));
+}
+
+void runTests()
+{
+	// Test order of char bytes in memory
+	// Does chars being stored "backwards" really matter?
+	// It'll happen the same way on both sides.
+
+	Block a;
+	snprintf(a.asChars, 4, "abc\0");
+	printf("Block as an integer: %" PRIu32 "\n", a.asInt);
+	printf("Original block: %s\n", a.asChars);
+}
+
+// ENCRYPTION STUFF
+
+void encrypt(FILE *inFile, FILE *keyFile)
+{
+	Block blockBuf;
+	Num p, g, d;
+	int numKeyPartsRead = 0;
+	
+	numKeyPartsRead += fscanf(keyFile, "%" SCNu64 "", &p);
+	numKeyPartsRead += fscanf(keyFile, "%" SCNu64 "", &g);
+	numKeyPartsRead += fscanf(keyFile, "%" SCNu64 "", &d);
+
+	if(numKeyPartsRead < 3)
+	{
+		fprintf(stderr, "Error: Unable to fully read key. (Needed 3 parts, got %d)\nExiting...\n", numKeyPartsRead);
+		exit(1);
+	}
+
+	FILE *outFile = fopen("ciphertext.txt", "w");
+
+	if(outFile == NULL)
+	{
+		fprintf(stderr, "Error: unable to open ciphertext.txt for writing.\nExiting...\n");
+		exit(1);
+	}
+
+	while(fgets(blockBuf.asChars, 4, inFile) != NULL)
+	{
+		// we have the block as chars and as an int
+		Num k = randBetween(0, p);
+		Num c1 = fastModExp(g, k, p);
+		Num c2 = (fastModExp(d, k, p) * blockBuf.asInt) % p;
+
+		printf("Generated ciphertext block (%" PRIu64 ", %" PRIu64 ")\n", c1, c2);
+		fprintf(outFile, "%" PRIu64 " %" PRIu64 "\n", c1, c2);
+	}
+
+	fclose(outFile);
+	printf("Encryption complete.\nCiphertext written to ciphertext.txt in current directory.");
 }
 

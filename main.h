@@ -11,6 +11,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <assert.h>
+#include <errno.h>
 
 // 	STRUCTS
 struct composition{
@@ -31,6 +32,11 @@ typedef struct key{
 	Num d;
 }Key;
 
+typedef union block{
+	char asChars[4];
+	uint32_t asInt;
+}Block;
+
 
 // DEFINES
 #define COMPOSITE false
@@ -46,5 +52,8 @@ Num findPrime(int);
 PreKey randomNumber();
 void keygen(int);
 Num randBetween(Num, Num);
+void encrypt(FILE *, FILE *);
+
+void runTests();
 
 #endif
