@@ -1,9 +1,43 @@
 #include "main.h"
 
-int main()
+int main(int argc, char *argv[])
 {
-	// srand((unsigned int)time(NULL));
-	keygen(-1);
+	/*
+		Usage:
+			./main keygen seed
+			./main encrypt key.txt plaintext
+			./main decrypt key.txt plaintext
+	*/
+	if(argc < 3)
+	{
+		printf("Error: Too few arguments given to %s\n", argv[0]);
+		printf("Usage: %s keygen seed\n%s encrypt key.txt plaintext\n%s decrypt key.txt plaintext\n", 
+			argv[0], argv[0], argv[0]);
+		exit(1);
+	}
+
+	char *mode = argv[1];
+	if(strstr(mode, "keygen") != NULL)
+	{
+		int seed = atoi(argv[2]);
+		keygen(seed);
+	}
+	else if(strstr(mode, "encrypt") != NULL)
+	{
+		printf("Not implemented yet\n");
+	}
+	else if(strstr(mode, "decrypt") != NULL)
+	{
+		printf("Not implemented yet\n");
+	}
+	else
+	{
+		printf("Error: Invalid arguments given to %s\n", argv[0]);
+		printf("Usage: %s keygen seed\n%s encrypt key.txt plaintext\n%s decrypt key.txt plaintext\n", 
+			argv[0], argv[0], argv[0]);
+		exit(1);
+	}
+
 }
 
 //	Written using the pseudocode from the Algorithms class book.
