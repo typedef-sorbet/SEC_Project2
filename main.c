@@ -304,7 +304,7 @@ void encrypt(FILE *inFile, FILE *keyFile)
 	}
 
 	fclose(outFile);
-	printf("Encryption complete.\nCiphertext written to ciphertext.txt in current directory.");
+	printf("Encryption complete.\nCiphertext written to ciphertext.txt in current directory.\n");
 }
 
 void decrypt(FILE *inFile, FILE *keyFile)
@@ -335,15 +335,15 @@ void decrypt(FILE *inFile, FILE *keyFile)
 
 	while(fgets(lineBuf, 120, inFile) != NULL)
 	{
-		sscanf(lineBuf, "%" SCNu64 "", &c1);
-		sscanf(lineBuf, "%" SCNu64 "", &c2);
+		sscanf(lineBuf, "%" SCNu64 " %" SCNu64 "", &c1, &c2);
 
 		// we have c1 and c2 now in memory
 		blockBuf.asInt = (fastModExp(c1, p-1-d, p) * c2) % p;
 
+		printf("Took in ciphertext values (%" PRIu64 ", %" PRIu64 ")\n", c1, c2);
+		printf("Generated plaintext block <%s>\n", blockBuf.asChars);
 		fprintf(outFile, "%s", blockBuf.asChars);
 	}
 
 	printf("Decryption complete.\nPlaintext written out to plaintext.txt in current directory.\n");
 }
-
