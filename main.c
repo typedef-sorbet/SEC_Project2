@@ -46,7 +46,20 @@ int main(int argc, char *argv[])
 	}
 	else if(strstr(mode, "decrypt") != NULL)
 	{
-		printf("Not implemented yet\n");
+		// attempt to open relevant files
+		char *keyPath = argv[2];
+		char *cipherPath = argv[3];
+
+		FILE *keyFile = fopen(keyPath, "r");
+		FILE *cipherFile = fopen(cipherPath, "r");
+
+		if(keyFile == NULL || cipherPath == NULL)
+		{
+			fprintf(stderr, "Error: unable to open one or more of the specified files. Exiting...\n");
+			exit(1);
+		}
+
+		decrypt(cipherFile, keyFile);
 	}
 	else
 	{
@@ -253,7 +266,7 @@ void runTests()
 	printf("Original block: %s\n", a.asChars);
 }
 
-// ENCRYPTION STUFF
+// EN/DECRYPTION STUFF
 
 void encrypt(FILE *inFile, FILE *keyFile)
 {
@@ -292,5 +305,45 @@ void encrypt(FILE *inFile, FILE *keyFile)
 
 	fclose(outFile);
 	printf("Encryption complete.\nCiphertext written to ciphertext.txt in current directory.");
+}
+
+void decrypt(FILE *inFile, FILE *keyFile)
+{
+	char lineBuf[120];
+	Block blockBuf;
+	Num c1, c2;
+	Num p, g, d;
+	int numKeyPartsRead = 0;
+	
+	numKeyPartsRead += fscanf(keyFile, "%" SCNu64 "", &p);
+	numKeyPartsRead += fscanf(keyFile, "%" SCNu64 "", &g);
+	numKeyPartsRead += fscanf(keyFile, "%" SCNu64 "", &d);
+
+	if(numKeyPartsRead < 3)
+	{
+		fprintf(stderr, "Error: Unable to fully read key. (Needed 3 parts, got %d)\nExiting...\n", numKeyPartsRead);
+		exit(1);
+	}
+
+	FILE *outFile = fopen("plaintext.txt", "w");
+
+	if(outFile == NULL)
+	{
+		fprintf(stderr, "Error: unable to open plaintext.txt for writing.\nExiting...\n");
+		exit(1);
+	}
+
+	while(fgets(lineBuf, 120, inFile) != NULL)
+	{
+		sscanf(lineBuf, "%" SCNu64 "", &c1);
+		sscanf(lineBuf, "%" SCNu64 "", &c2);
+
+		// we have c1 and c2 now in memory
+		blockBuf.asInt = (fastModExp(c1, p-1-d, p) * c2) % p;
+
+		fprintf(outFile, "%s", blockBuf.asChars);
+	}
+
+	printf("Decryption complete.\nPlaintext written out to plaintext.txt in current directory.\n");
 }
 

@@ -53,6 +53,7 @@ PreKey randomNumber();
 void keygen(int);
 Num randBetween(Num, Num);
 void encrypt(FILE *, FILE *);
+void decrypt(FILE *, FILE*);
 
 void runTests();
 
