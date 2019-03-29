@@ -245,6 +245,7 @@ PreKey randomNumber()
 	return number;
 }
 
+// Generates public and private keys based upon the seed given.
 void keygen(int seed)
 {
 	Num p = findPrime(seed);			// generate a prime modulus p such that p has a primitive root of 2
