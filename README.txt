@@ -4,6 +4,13 @@ Assignment:
 	Computer Security, Project 2: Public/Private Crypto
 Date:
 	April 1, 2019
+Project Overview:
+	Project 2 is a small investigation into the mechanics of public/private crypto systems.
+	This project covers public and private key generation using large primes and modular
+	exponentiation, as well as encryption and decryption using moduler exponentiation.
+	Files can be encrypted and decrypted using keys generated from the keygen algorithm,
+	and depending on which key you encrypt with, you can either encrypt for confidentiality,
+	or encrypt for digital signing and origin authentication.
 Included Files:
 	spencer.warneke.zip
 	├── main.c
