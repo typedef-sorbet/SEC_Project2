@@ -54,7 +54,7 @@ void keygen(int);
 Num randBetween(Num, Num);
 void encrypt(FILE *, FILE *);
 void decrypt(FILE *, FILE*);
-
-void runTests();
+void printHelpMessage(char *);
+void printUsage(char *);
 
 #endif
